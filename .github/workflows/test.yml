@@ -51,6 +51,7 @@ jobs:
           private-key: ${{ secrets.WORKSPACE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: trantor
+          permission-contents: write
       - name: Dispatch the green SHA to trantor
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
