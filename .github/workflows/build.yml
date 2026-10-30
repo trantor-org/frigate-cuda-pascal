@@ -19,6 +19,11 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: read
+
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
@@ -63,11 +68,11 @@ jobs:
             FRIGATE_VERSION=${{ steps.frigate_ver.outputs.version }}
 
   # A merge here moves nothing in unraid: the frigate gitlink is only bumped by trantor's freeze-SHA engine.
-  # Dispatch the built SHA after Build and Push publishes the image on main so the bump PR opens now instead of waiting on the
-  # next */15 tick.
+  # Dispatch the built SHA after the image is published and tests pass on main so the bump PR opens now
+  # instead of waiting on the next */15 tick.
   dispatch:
     name: dispatch
-    needs: [build-and-push]
+    needs: [build-and-push, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
